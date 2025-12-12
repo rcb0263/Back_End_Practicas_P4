@@ -15,14 +15,14 @@ export const typeDefs =gql`
         description: String!
         startDate: String!
         endDate: String!
-        owner: ID!
-        members: [ID]!
+        owner: User!
+        members: [User]!
     }
     type Task {
         _id: ID,
         title: String!
-        projectId: ID!
-        assignedTo: ID,
+        projectId: Project!
+        assignedTo: User,
         status: TaskStatus!
         priority: PriorityList!
         dueDate: String!

@@ -34,6 +34,44 @@ export const resolvers: IResolvers = {
             return project;
         }
     },
+    Task: {
+        projectId: async (task, _, __) => {
+            const db = getDB();
+            return await db.collection("projects").findOne({
+                _id: new ObjectId(task.projectId)
+            });
+        },
+
+        assignedTo: async (task, _, __) => {
+            if (!task.assignedTo) return null;
+
+            const db = getDB();
+            return await db.collection("users").findOne({
+                _id: new ObjectId(task.assignedTo)
+            });
+        }
+    },
+    Project: {
+        owner: async (project, _, __) => {
+            const db = getDB();
+            return await db.collection("users").findOne({
+                _id: new ObjectId(project.owner)
+            });
+        },
+
+        members: async (project, _, __) => {
+            const db = getDB();
+
+            if (!project.members || project.members.length === 0) return [];
+
+            const memberObjectIds = project.members.map((id:string) => new ObjectId(id));
+
+            return await db.collection("users")
+                .find({ _id: { $in: memberObjectIds } })
+                .toArray();
+        }
+    },
+
     Mutation: {
         register: async (_, { input }: { input: { email: string, password: string, username: string } }) => {
             const { email, password, username } = input
